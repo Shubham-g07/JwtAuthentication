@@ -14,9 +14,16 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 public class securityConfig {
+
+    @Autowired
+    private jwtAuthEntry entryPoint;
+
+    @Autowired
+    private jwtAuthFilter jwtAuthFilter;
 
     @Autowired
     private CustomUserDetailService customUserDetailService;
@@ -71,11 +78,10 @@ public class securityConfig {
                 // to off the session storage
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .csrf(csrf -> csrf.disable())
-                .cors(cors -> cors.disable());
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(entryPoint))
+                .csrf(csrf -> csrf.disable());
 
         return http.build();
     }
-
-
 }

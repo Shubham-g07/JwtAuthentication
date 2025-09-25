@@ -12,4 +12,9 @@ public class mainController {
         return s;
     }
 
+    @GetMapping("/getuser")
+    public String getUser(){
+        return "{\"name\":\"Durgesh\"}";
+    }
+
 }
